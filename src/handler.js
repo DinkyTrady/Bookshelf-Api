@@ -61,7 +61,7 @@ const addBooksHandler = (req, h) => {
 
   if (isSucces) {
     const response = h.response({
-      status: 'succes',
+      status: 'success',
       message: 'Buku berhasil ditambahkan',
       data: {
         bookId: id,
@@ -81,13 +81,82 @@ const addBooksHandler = (req, h) => {
   return response;
 };
 
+const getAllBooksHandler = (req, h) => {
+  const { name, reading, finished } = req.query;
+
+  if (!name) {
+    const BooksName = books.filter((book) =>
+      book.name.toLowerCase().includes(name.toLowerCase())
+    );
+    const response = h.response({
+      status: 'success',
+      data: BooksName.map((book) => ({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher,
+      })),
+    });
+
+    response.code(200);
+    return response;
+  }
+
+  if (!reading) {
+    const BooksReading = books.filter(
+      (book) => Number(book.reading) === Number(reading)
+    );
+    const response = h.response({
+      status: 'success',
+      data: BooksReading.map((book) => ({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher,
+      })),
+    });
+
+    response.code(200);
+    return response;
+  }
+
+  if (!finished) {
+    const BooksFinished = books.filter((book) => book.finished === finished);
+    const response = h.response({
+      status: 'success',
+      data: {
+        books: BooksFinished.map((book) => ({
+          id: book.id,
+          name: book.name,
+          publisher: book.publisher,
+        })),
+      },
+    });
+
+    response.code(200);
+    return response;
+  }
+
+  const response = h.response({
+    status: 'success',
+    data: {
+      books: books.map((book) => ({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher,
+      })),
+    },
+  });
+
+  response.code(200);
+  return response;
+};
+
 const getBooksByIdHandler = (req, h) => {
   const { id } = req.params;
   const book = books.filter((books) => books.id === id)[0];
 
   if (book !== undefined) {
     const response = h.response({
-      status: 'succes',
+      status: 'success',
       data: book,
     });
 
@@ -159,7 +228,7 @@ const editBooksByIdHandler = (req, h) => {
     };
 
     const response = h.response({
-      status: 'succes',
+      status: 'success',
       message: 'Buku berhasil diperbarui',
     });
 
@@ -203,6 +272,7 @@ const deleteBooksByIdHandler = (req, h) => {
 
 module.exports = {
   addBooksHandler,
+  getAllBooksHandler,
   getBooksByIdHandler,
   editBooksByIdHandler,
   deleteBooksByIdHandler,
