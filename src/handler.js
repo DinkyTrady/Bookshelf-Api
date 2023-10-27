@@ -57,7 +57,7 @@ const addBooksHandler = (req, h) => {
 
   books.push(newBooks);
 
-  const isSucces = books.filter((books) => books.id === id).length > 0;
+  const isSucces = books.filter((book) => book.id === id);
 
   if (isSucces) {
     const response = h.response({
@@ -73,8 +73,8 @@ const addBooksHandler = (req, h) => {
   }
 
   const response = h.response({
-    status: 'fail',
-    message: 'Gagal menambahkan buku',
+    status: 'error',
+    message: 'Gagal menambahkan buku ' + isSucces,
   });
 
   response.code(500);
