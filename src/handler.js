@@ -74,7 +74,7 @@ const addBooksHandler = (req, h) => {
 
   const response = h.response({
     status: 'error',
-    message: 'Gagal menambahkan buku ' + isSucces,
+    message: 'Gagal menambahkan buku',
   });
 
   response.code(500);
