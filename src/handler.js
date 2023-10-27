@@ -82,7 +82,7 @@ const addBooksHandler = (req, h) => {
 };
 
 const getAllBooksHandler = (req, h) => {
-  const { name, reading, finished } = req.query;
+  const { name, reading, finished } = req.payload;
 
   if (!name) {
     const BooksName = books.filter((book) =>
@@ -154,7 +154,7 @@ const getBooksByIdHandler = (req, h) => {
   const { id } = req.params;
   const book = books.filter((books) => books.id === id)[0];
 
-  if (book !== undefined) {
+  if (!book) {
     const response = h.response({
       status: 'success',
       data: book,
@@ -249,7 +249,7 @@ const deleteBooksByIdHandler = (req, h) => {
   const { id } = req.params;
   const index = books.findIndex((books) => books.id === id);
 
-  if (books[index] !== -1) {
+  if (index !== -1) {
     books.splice(index, 1);
 
     const response = h.response({
