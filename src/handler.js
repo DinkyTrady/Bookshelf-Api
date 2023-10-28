@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable indent */
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
@@ -27,7 +29,6 @@ const addBooksHandler = (req, h) => {
     const response = h.response({
       status: 'fail',
       message:
-        // eslint-disable-next-line max-len
         'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
     });
 
@@ -40,7 +41,7 @@ const addBooksHandler = (req, h) => {
   const updatedAt = insertedAt;
   const finished = pageCount === readPage;
 
-  const newBooks = [
+  const newBooks = {
     id,
     name,
     year,
@@ -53,11 +54,11 @@ const addBooksHandler = (req, h) => {
     reading,
     insertedAt,
     updatedAt,
-  ];
+  };
 
   books.push(newBooks);
 
-  const isSucces = books.filter((book) => book.id === id);
+  const isSucces = books.filter((book) => book.id === id).length > 0;
 
   if (isSucces) {
     const response = h.response({
@@ -86,34 +87,32 @@ const getAllBooksHandler = (req, h) => {
 
   let filterBooks = books;
 
-  if (name) {
-    filterBooks = books.filter((book) => {
-      book.name.toLowerCase().includes(name.toLowerCase());
-    });
+  if (name !== undefined) {
+    filterBooks = books.filter((book) =>
+      book.name.toLowerCase().includes(name.toLowerCase())
+    );
   }
 
-  if (reading) {
-    filterBooks = books.filter((book) => {
-      Number(book.reading) === Number(reading);
-    });
+  if (reading !== undefined) {
+    filterBooks = books.filter(
+      (book) => Number(book.reading) === Number(reading)
+    );
   }
 
-  if (finished) {
-    filterBooks = books.filter((book) => {
-      Number(book.finished) === Number(finished);
-    });
+  if (finished !== undefined) {
+    filterBooks = books.filter(
+      (book) => Number(book.finished) === Number(finished)
+    );
   }
-
-  const listBooks = filterBooks.map((book) => ({
-    id: book.id,
-    name: book.name,
-    publisher: book.publisher,
-  }));
 
   const response = h.response({
     status: 'success',
     data: {
-      books: listBooks,
+      books: filterBooks.map((book) => ({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher,
+      })),
     },
   });
 
@@ -123,9 +122,9 @@ const getAllBooksHandler = (req, h) => {
 
 const getBooksByIdHandler = (req, h) => {
   const { bookId } = req.params;
-  const book = books.filter((books) => books.id === bookId)[0];
+  const book = books.filter((book) => book.id === bookId)[0];
 
-  if (!book) {
+  if (book !== undefined) {
     const response = h.response({
       status: 'success',
       data: { book },
@@ -140,7 +139,7 @@ const getBooksByIdHandler = (req, h) => {
     message: 'Buku tidak ditemukan',
   });
 
-  response.code(500);
+  response.code(404);
   return response;
 };
 
@@ -157,9 +156,8 @@ const editBooksByIdHandler = (req, h) => {
     reading,
   } = req.payload;
 
-  const index = books.findIndex((books) => books.id === bookId);
   const updatedAt = new Date().toISOString();
-  const finished = pageCount === readPage;
+  const findId = books.findIndex((book) => book.id === bookId);
 
   if (!name) {
     const response = h.response({
@@ -175,7 +173,6 @@ const editBooksByIdHandler = (req, h) => {
     const response = h.response({
       status: 'fail',
       message:
-        // eslint-disable-next-line
         'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
     });
 
@@ -183,9 +180,11 @@ const editBooksByIdHandler = (req, h) => {
     return response;
   }
 
-  if (index !== -1) {
-    books[index] = {
-      ...books[index],
+  if (findId !== -1) {
+    const finished = pageCount === readPage;
+
+    books[findId] = {
+      ...books[findId],
       name,
       year,
       author,
@@ -218,7 +217,7 @@ const editBooksByIdHandler = (req, h) => {
 
 const deleteBooksByIdHandler = (req, h) => {
   const { bookId } = req.params;
-  const index = books.findIndex((books) => books.id === bookId);
+  const index = books.findIndex((book) => book.id === bookId);
 
   if (index !== -1) {
     books.splice(index, 1);
