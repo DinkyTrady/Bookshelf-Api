@@ -88,21 +88,21 @@ const getAllBooksHandler = (req, h) => {
   let filterBooks = books;
 
   if (name !== undefined) {
-    filterBooks = books.filter((book) =>
-      book.name.toLowerCase().includes(name.toLowerCase())
-    );
+    filterBooks = books.filter((book) => {
+      return book.name.toLowerCase().includes(name.toLowerCase());
+    });
   }
 
   if (reading !== undefined) {
-    filterBooks = books.filter(
-      (book) => Number(book.reading) === Number(reading)
-    );
+    filterBooks = books.filter((book) => {
+      return Number(book.reading) === Number(reading);
+    });
   }
 
   if (finished !== undefined) {
-    filterBooks = books.filter(
-      (book) => Number(book.finished) === Number(finished)
-    );
+    filterBooks = books.filter((book) => {
+      return Number(book.finished) === Number(finished);
+    });
   }
 
   const response = h.response({
