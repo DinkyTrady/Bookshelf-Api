@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable indent */
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
@@ -29,7 +27,7 @@ const addBooksHandler = (req, h) => {
     const response = h.response({
       status: 'fail',
       message:
-        'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
+        'Gagal menambah buku. readPage tidak boleh lebih besar dari pageCount',
     });
 
     response.code(400);
@@ -173,7 +171,7 @@ const editBooksByIdHandler = (req, h) => {
     const response = h.response({
       status: 'fail',
       message:
-        'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
+        'Gagal memperbarui buku. readPage tidak boleh lebih dari pageCount',
     });
 
     response.code(400);
