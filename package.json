@@ -1,7 +1,7 @@
 {
   "name": "bookshelf-api",
   "version": "1.0.0",
-  "description": "this is a project assignment from dicoding",
+  "description": "this is a project improved from dicoding assignment",
   "main": "index.js",
   "scripts": {
     "start": "bun ./src/server.js",
@@ -15,6 +15,7 @@
     "nanoid": "^3.3.6"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.15",
     "eslint": "^8.52.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-standard": "^17.1.0",
@@ -22,5 +23,9 @@
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
     "prettier": "^3.4.2"
+  },
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5"
   }
 }
