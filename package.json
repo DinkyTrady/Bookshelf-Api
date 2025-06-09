@@ -2,8 +2,7 @@
   "name": "bookshelf-api",
   "scripts": {
     "dev": "bun run --smol --hot src/index.ts",
-    "build": "bun build src/index.ts --outdir ./dist --minify",
-    "start": "bun dist/index.js",
+    "start": "bun src/index.js",
     "db:generate": "bunx prisma generate",
     "db:reset": "bunx prisma migrate reset",
     "db:migrate": "bunx prisma migrate dev",
