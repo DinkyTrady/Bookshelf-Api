@@ -2,20 +2,13 @@
   "name": "bookshelf-api",
   "scripts": {
     "dev": "bun run --smol --hot src/index.ts",
-    "start": "bun src/index.js",
-    "db:generate": "bunx prisma generate",
-    "db:reset": "bunx prisma migrate reset",
-    "db:migrate": "bunx prisma migrate dev",
-    "db:push": "bunx prisma db push",
-    "db:seed": "bun prisma/prisma-seed.ts",
-    "db:studio": "bunx prisma studio"
+    "build": "bun build --target bun src/index.ts --outdir dist",
+    "start": "bun dist/index.js"
   },
   "dependencies": {
-    "@prisma/client": "^6.9.0",
     "hono": "^4.7.11"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "prisma": "^6.9.0"
+    "@types/bun": "latest"
   }
 }
