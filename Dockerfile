@@ -2,13 +2,15 @@ FROM oven/bun:alpine
 
 WORKDIR /app
 
-COPY package.json ./
-COPY bun.lock ./
+# Install curl for health checks
+RUN apk --no-cache add curl
 
-RUN bun install --production
+COPY package.json bun.lock ./
+
+RUN bun install --frozen-lockfile
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["bun", "run", "--smol", "--hot", "src/index.ts"]
+CMD ["bun", "run", "dev"]
