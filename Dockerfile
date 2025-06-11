@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json ./
 COPY bun.lock ./
 
-RUN bun install
+RUN bun install && bun add hono@4.7.11
 
 COPY . .
 
