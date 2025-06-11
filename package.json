@@ -4,16 +4,20 @@
     "dev": "bun run --smol --hot src/index.ts",
     "build": "bun build --target bun src/index.ts --outdir dist --minify",
     "start": "bun dist/index.js",
+    "migrate": "bunx drizzle-kit generate && bunx drizzle-kit migrate",
     "docker:up": "docker compose up",
     "docker:down": "docker compose down"
   },
   "dependencies": {
+    "dotenv": "^16.5.0",
     "drizzle-orm": "^0.44.2",
-    "hono": "^4.7.11"
+    "hono": "^4.7.11",
+    "pg": "^8.16.0",
+    "zod": "^3.25.58"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "dotenv": "^16.5.0",
+    "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.1"
   }
 }
