@@ -59,8 +59,10 @@ export const bookTable = pgTable("book", {
   publisherId: varchar({ length: 255 }).notNull(), // Foreign key to publisher table
   pageCount: integer().notNull(), // Total number of pages in the book
   readedPage: integer().notNull(), // Current page the user has read up to
+  reading: boolean().notNull().default(false), // Whether the book is currently being read
   finished: boolean().notNull().default(false), // Whether the book has been completely read
   createdAt: date().notNull().defaultNow(), // Date when the book was added to the database
+  updatedAt: date().notNull().defaultNow(), // Date when the book was last updated
 });
 
 /**

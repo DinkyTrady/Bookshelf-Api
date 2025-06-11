@@ -1,7 +1,13 @@
 import "dotenv/config";
 
-import { drizzle } from "drizzle-orm/bun-sql";
-import { SQL } from "bun";
+import { drizzle } from "drizzle-orm/node-postgres";
 
-const client = new SQL(process.env.DATABASE_URL!);
-const db = drizzle({ client });
+export const db = drizzle({
+  connection: {
+    connectionString: process.env.DATABASE_URL!,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    maxLifetimeSeconds: 3600,
+  },
+  logging: true,
+});
