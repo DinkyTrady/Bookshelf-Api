@@ -1,6 +1,5 @@
 import { Context, Hono } from "hono";
 import { db } from "../db/utils";
-import { bookTable } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 const books = new Hono().basePath("/books");
@@ -8,7 +7,10 @@ const books = new Hono().basePath("/books");
 books
   .get("/", async (c) => {
     try {
-      const booksList = await db.select().from(bookTable).orderBy(bookTable.id);
+      const booksList = await db.query.bookTable.findMany({
+        orderBy: (book) => [book.id],
+      });
+
       if (!booksList) {
         return c.json({ success: false, messages: "No books found" }, 404);
       }
@@ -22,7 +24,8 @@ books
       return c.json(
         {
           success: false,
-          messages: "Error fetching books from the database " + e,
+          messages: "Error fetching books from the database",
+          error: e instanceof Error ? e.message : String(e),
         },
         500,
       );
@@ -31,10 +34,10 @@ books
   .get("/:id", async (c: Context) => {
     try {
       const bookId = c.req.param("id");
-      const getBook = await db
-        .select()
-        .from(bookTable)
-        .where(eq(bookTable.displayId, bookId));
+      // Using more consistent query API
+      const getBook = await db.query.bookTable.findFirst({
+        where: (book) => eq(book.displayId, bookId),
+      });
 
       if (!getBook) {
         return c.json({
@@ -46,13 +49,14 @@ books
       return c.json({
         success: true,
         messages: "Book found from the database",
-        data: getBook[0],
+        data: getBook,
       });
     } catch (e: unknown) {
       return c.json(
         {
           success: false,
-          messages: "Error fetching book from the database " + e,
+          messages: "Error fetching book from the database",
+          error: e instanceof Error ? e.message : String(e),
         },
         500,
       );

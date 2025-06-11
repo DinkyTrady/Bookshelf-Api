@@ -20,15 +20,6 @@ export const publisherTable = pgTable("publisher", {
 });
 
 /**
- * Publisher relations definition
- * Defines the one-to-many relationships between publishers and authors/books
- */
-export const publisherRelations = relations(publisherTable, ({ many }) => ({
-  authors: many(authorTable), // A publisher can have multiple authors
-  books: many(bookTable), // A publisher can publish multiple books
-}));
-
-/**
  * Author table schema
  * Represents book authors in the database
  */
@@ -37,14 +28,6 @@ export const authorTable = pgTable("author", {
   displayId: varchar({ length: 255 }).notNull().unique(), // Public-facing unique identifier
   name: varchar({ length: 255 }).notNull(), // Author's name
 });
-
-/**
- * Relationship definition for the Author table
- * Defines the one-to-many relationship between authors and books
- */
-export const authorRelations = relations(authorTable, ({ many }) => ({
-  book: many(bookTable), // An author can have multiple books
-}));
 
 /**
  * Book table schema
@@ -64,6 +47,23 @@ export const bookTable = pgTable("book", {
   createdAt: date().notNull().defaultNow(), // Date when the book was added to the database
   updatedAt: date().notNull().defaultNow(), // Date when the book was last updated
 });
+
+/**
+ * Publisher relations definition
+ * Defines the one-to-many relationships between publishers and authors/books
+ */
+export const publisherRelations = relations(publisherTable, ({ many }) => ({
+  authors: many(authorTable), // A publisher can have multiple authors
+  books: many(bookTable), // A publisher can publish multiple books
+}));
+
+/**
+ * Relationship definition for the Author table
+ * Defines the one-to-many relationship between authors and books
+ */
+export const authorRelations = relations(authorTable, ({ many }) => ({
+  book: many(bookTable), // An author can have multiple books
+}));
 
 /**
  * Relationship definition for the Book table
