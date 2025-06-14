@@ -50,21 +50,6 @@ services:
     networks:
       - internal_network
 
-  ngrok:
-    image: ngrok/ngrok:alpine
-    ports:
-      - "4040:4040"
-    command:
-      - "http"
-      - "--domain=fond-upright-ocelot.ngrok-free.app"
-      - "app:3000"
-    environment:
-      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
-    networks:
-      - internal_network
-    depends_on:
-      app:
-        condition: service_healthy
 volumes:
   postgres_data:
 

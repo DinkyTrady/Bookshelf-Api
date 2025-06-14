@@ -20,6 +20,7 @@ async function startServer() {
     hostname: hostname,
     port: port,
     fetch: app.fetch,
+    development: process.env.NODE_ENV !== "production",
   });
 
   console.log(`Server running at http://${hostname}:${port}`);
