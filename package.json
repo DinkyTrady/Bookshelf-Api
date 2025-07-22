@@ -4,7 +4,8 @@
   "description": "Personal project bookshelf-api",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --hot ./src/api/index.ts"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,12 @@
     "globals": "^16.3.0",
     "prettier": "^3.6.2",
     "typescript-eslint": "^8.38.0"
+  },
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "hono": "^4.8.5"
   }
 }
