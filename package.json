@@ -11,5 +11,16 @@
     "url": "http://localhost:90/DinkyTrady/Bookshelf-Api.git"
   },
   "author": "DinkyTrady",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.31.0",
+    "@types/bun": "^1.2.19",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
+    "globals": "^16.3.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.38.0"
+  }
 }
