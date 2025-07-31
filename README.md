@@ -1,15 +1,28 @@
 # bookshelf-api
 
+> [!NOTE]
+> Change bun to npm if using nodejs
+
 To install dependencies:
 
 ```bash
 bun install
 ```
 
-To run:
+To run (development):
 
 ```bash
-bun run index.js
+bun run dev
 ```
 
-This project was created using `bun init` in bun v1.2.14. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+To build:
+
+```bash
+bun run build
+```
+
+To run the build:
+
+```bash
+bun run start
+```
