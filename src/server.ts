@@ -2,14 +2,12 @@ import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import { config } from './config.js';
 import { logger } from 'hono/logger';
-import { prettyJSON } from 'hono/pretty-json';
 import { cors } from 'hono/cors';
 import routes from './routes.js';
 import { HTTPException } from 'hono/http-exception';
 
 const app = new Hono({ strict: false });
 app.use(logger());
-app.use(prettyJSON());
 app.use('*', cors());
 
 app.get('/', (c) => c.text('hello'));
