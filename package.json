@@ -1,38 +1,37 @@
 {
-  "name": "bookshelf-api",
-  "version": "1.0.0",
-  "description": "Personal project bookshelf-api",
+  "$schema": "https://www.schemastore.org/package.json",
+  "name": "Bookshelf Apps",
+  "version": "1.0",
+  "author": {
+    "name": "DinkyTrady"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "type": "module",
   "scripts": {
-    "lint": "eslint src",
-    "format": "eslint --fix",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsc -w & nodemon ./dist/server.js",
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://localhost:90/DinkyTrady/Bookshelf-Api.git"
-  },
-  "author": "DinkyTrady",
-  "license": "MIT",
-  "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.31.0",
-    "@types/node": "^24.1.0",
-    "eslint": "^9.31.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.3",
-    "globals": "^16.3.0",
-    "nodemon": "^3.1.10",
-    "prettier": "^3.6.2",
-    "typescript-eslint": "^8.38.0"
-  },
-  "private": true,
   "dependencies": {
-    "@hono/node-server": "^1.17.1",
-    "hono": "^4.8.5",
-    "typescript": "^5.9.2"
+    "@bookshelf/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.2",
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
+    "oxlint-tsgolint": "^7.0.2003",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.3"
   }
 }

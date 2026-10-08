@@ -1,10 +1,9 @@
 import { Hono } from 'hono';
-import { serve } from '@hono/node-server';
-import { config } from './config.js';
 import { logger } from 'hono/logger';
 import { cors } from 'hono/cors';
 import routes from './routes.js';
 import { HTTPException } from 'hono/http-exception';
+import { config } from '../../../packages/shared/src/configs/global.js';
 
 const app = new Hono({ strict: false });
 app.use(logger());
@@ -25,13 +24,8 @@ app.notFound((c) => {
   return c.json({ status: false, message: `Not found path with ${c.req.url}` }, 404);
 });
 
-serve(
-  {
-    fetch: app.fetch,
-    port: config.port,
-    hostname: config.hostname,
-  },
-  (options) => {
-    console.log(`Server running on ${config.protocol}://${config.hostname}:${options.port}`);
-  },
-);
+Bun.serve({
+  fetch: app.fetch,
+  port: config.port,
+  hostname: config.hostname,
+});

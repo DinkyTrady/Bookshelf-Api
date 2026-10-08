@@ -1,0 +1,18 @@
+// Auto generated with bun init
+{
+  "extends": "../../tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    // Environment setup & latest features
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "moduleDetection": "force",
+    "types": ["bun"],
+    "paths": {
+      "#/*": ["./*"]
+    }
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
+}
