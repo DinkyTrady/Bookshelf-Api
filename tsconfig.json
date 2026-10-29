@@ -1,10 +1,11 @@
 {
+  "$schema": "https://schemastore.org/tsconfig.json",
   "compilerOptions": {
     "strict": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "target": "esnext",
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  }
+    "types": ["bun"]
+  },
+  "exclude": ["node_modules"]
 }
