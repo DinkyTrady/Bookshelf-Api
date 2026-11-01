@@ -1,81 +1,109 @@
-import { relations } from "drizzle-orm";
+import { defineRelations } from "drizzle-orm";
 import {
-  boolean,
-  date,
+  index,
+  int,
   integer,
-  pgTable,
-  serial,
+  primaryKey,
+  sqliteTable,
   text,
-  varchar,
-} from "drizzle-orm/pg-core";
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 
-/**
- * Publisher table schema
- * Represents book publishers in the database
- */
-export const publisherTable = pgTable("publisher", {
-  id: serial().primaryKey(), // Auto-incrementing primary key
-  displayId: varchar({ length: 255 }).notNull().unique(), // Public-facing unique identifier
-  name: varchar({ length: 255 }).notNull(), // Publisher's name
-});
+export const publisher = sqliteTable(
+  "publisher",
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    name: text({ length: 255 }).notNull(),
+  },
+  (t) => [index("publisher_name_idx").on(t.name)],
+);
 
-/**
- * Author table schema
- * Represents book authors in the database
- */
-export const authorTable = pgTable("author", {
-  id: serial().primaryKey(), // Auto-incrementing primary key
-  displayId: varchar({ length: 255 }).notNull().unique(), // Public-facing unique identifier
-  name: varchar({ length: 255 }).notNull(), // Author's name
-});
+export const authors = sqliteTable(
+  "author",
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    name: text({ length: 255 }).notNull(),
+    biography: text().notNull().default(""),
 
-/**
- * Book table schema
- * Represents books in the database with their metadata
- */
-export const bookTable = pgTable("book", {
-  id: serial().primaryKey(), // Auto-incrementing primary key
-  displayId: varchar({ length: 255 }).notNull().unique(), // Public-facing unique identifier
-  authorId: varchar({ length: 255 }).notNull(), // Foreign key to author table
-  title: varchar({ length: 255 }).notNull(), // Book title
-  summary: text().notNull(), // Book summary/description
-  publisherId: varchar({ length: 255 }).notNull(), // Foreign key to publisher table
-  pageCount: integer().notNull(), // Total number of pages in the book
-  readedPage: integer().notNull(), // Current page the user has read up to
-  reading: boolean().notNull().default(false), // Whether the book is currently being read
-  finished: boolean().notNull().default(false), // Whether the book has been completely read
-  createdAt: date().notNull().defaultNow(), // Date when the book was added to the database
-  updatedAt: date().notNull().defaultNow(), // Date when the book was last updated
-});
+    publisherId: integer("publisher_id")
+      .notNull()
+      .references(() => publisher.id, { onDelete: "restrict" }),
+  },
+  (t) => [index("author_name_idx").on(t.name)],
+);
 
-/**
- * Publisher relations definition
- * Defines the one-to-many relationships between publishers and authors/books
- */
-export const publisherRelations = relations(publisherTable, ({ many }) => ({
-  authors: many(authorTable), // A publisher can have multiple authors
-  books: many(bookTable), // A publisher can publish multiple books
-}));
+export const books = sqliteTable(
+  "book",
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    title: text({ length: 255 }).notNull(),
+    slug: text().notNull(),
+    isbn: text().notNull(),
+    summary: text().notNull(),
+    pageCount: int("page_count", { mode: "number" }).notNull(),
+    readedPage: int("readed_page", { mode: "number" }).notNull(),
+    reading: int({ mode: "boolean" }).notNull().default(false),
+    finished: int({ mode: "boolean" }).notNull().default(false),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date())
+      .$onUpdateFn(() => new Date()),
 
-/**
- * Relationship definition for the Author table
- * Defines the one-to-many relationship between authors and books
- */
-export const authorRelations = relations(authorTable, ({ many }) => ({
-  book: many(bookTable), // An author can have multiple books
-}));
+    publisherId: integer("publisher_id")
+      .notNull()
+      .references(() => publisher.id, { onDelete: "restrict" }),
+  },
+  (t) => [
+    uniqueIndex("book_isbn_idx").on(t.isbn),
+    uniqueIndex("book_slug_idx").on(t.slug),
+  ],
+);
 
-/**
- * Relationship definition for the Book table
- * Defines the many-to-one relationships between books and authors/publishers
- */
-export const bookRelations = relations(bookTable, ({ one }) => ({
-  author: one(authorTable, {
-    fields: [bookTable.authorId], // Local field in the book table
-    references: [authorTable.displayId], // Referenced field in the author table
+export const authorsToBooks = sqliteTable(
+  "authors_to_books",
+  {
+    authorId: integer("author_id")
+      .notNull()
+      .references(() => authors.id, { onDelete: "cascade" }),
+    bookId: integer("book_id")
+      .notNull()
+      .references(() => books.id, { onDelete: "cascade" }),
+  },
+  (t) => [primaryKey({ columns: [t.authorId, t.bookId] })],
+);
+
+export const relations = defineRelations(
+  { publisher, authors, books, authorsToBooks },
+  (r) => ({
+    publisher: {
+      books: r.many.books(),
+      authors: r.many.authors({
+        from: r.publisher.id,
+        to: r.authors.publisherId,
+      }),
+    },
+    author: {
+      publisher: r.one.publisher({
+        from: r.authors.publisherId,
+        to: r.publisher.id,
+      }),
+      books: r.many.books({
+        from: r.authors.id.through(r.authorsToBooks.authorId),
+        to: r.books.id.through(r.authorsToBooks.bookId),
+      }),
+    },
+    books: {
+      publisher: r.one.publisher({
+        from: r.books.publisherId,
+        to: r.publisher.id,
+      }),
+      author: r.many.authors({
+        from: r.books.id.through(r.authorsToBooks.bookId),
+        to: r.authors.id.through(r.authorsToBooks.authorId),
+      }),
+    },
   }),
-  publisher: one(publisherTable, {
-    fields: [bookTable.publisherId], // Local field in the book table
-    references: [publisherTable.displayId], // Referenced field in the publisher table
-  }),
-}));
+);
