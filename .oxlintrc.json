@@ -4,8 +4,14 @@
   "categories": {
     "correctness": "error"
   },
-  "rules": {},
+  "rules": {
+    "no-unused-vars": "warn"
+  },
   "env": {
     "builtin": true
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
   }
 }
