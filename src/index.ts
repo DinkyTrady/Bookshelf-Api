@@ -1,14 +1,12 @@
-import app from "./app";
-import { testDbConnection } from "./db/utils";
-
-const hostname = process.env.HOSTNAME || "localhost";
-const port = process.env.PORT || 3000;
+import app from "#/app";
+import { env } from "#/configs/env";
+import { createDatabase } from "#/db/client";
 
 // Test database connection before starting the server
-async function startServer() {
+function startServer() {
   // Test database connection
-  const dbConnected = await testDbConnection();
-  if (!dbConnected) {
+  const db = createDatabase();
+  if (db.client.closed) {
     console.error(
       "Failed to connect to the database. Check your connection settings.",
     );
@@ -17,16 +15,12 @@ async function startServer() {
 
   // Start the server
   Bun.serve({
-    hostname: hostname,
-    port: port,
+    hostname: env.host,
+    port: env.port,
     fetch: app.fetch,
-    development: process.env.NODE_ENV !== "production",
   });
 
-  console.log(`Server running at http://${hostname}:${port}`);
+  console.log(`Server running at http://${env.host}:${env.port}`);
 }
 
-startServer().catch((err) => {
-  console.error("Failed to start server:", err);
-  process.exit(1);
-});
+startServer();
