@@ -5,7 +5,11 @@
     "module": "preserve",
     "moduleResolution": "bundler",
     "target": "esnext",
-    "types": ["bun"]
+    "types": ["bun"],
+    "paths": {
+      "#/*": ["./src/*"],
+      "./*": ["./*"]
+    }
   },
   "exclude": ["node_modules"]
 }

@@ -8,6 +8,16 @@
   },
   "type": "module",
   "main": "./src/app.ts",
+  "imports": {
+    "#types/": "./src/types/",
+    "#db/": "./src/db/",
+    "#repository/": "./src/repository/",
+    "#routes/": "./src/routes/",
+    "#middleware/": "./src/middleware/",
+    "#config/": "./src/config/",
+    "#lib/": "./src/lib/",
+    "#/": "./src/"
+  },
   "scripts": {
     "dev": "bun run --smol --hot src/index.ts",
     "build": "bun build --target bun src/index.ts --outdir dist --minify",
@@ -33,13 +43,14 @@
     "hono": "^4.13.14",
     "slugify": "^1.6.9",
     "uuidv7": "^1.2.1",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",
     "drizzle-kit": "^1.0.0-rc.5-ab785fc",
     "oxfmt": "^0.74.0",
     "oxlint": "^1.89.0",
+    "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   }
 }
