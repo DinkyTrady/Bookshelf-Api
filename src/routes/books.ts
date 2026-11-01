@@ -1,19 +1,40 @@
 import { Context, Hono } from "hono";
-import { db } from "../db/utils";
-import { eq } from "drizzle-orm";
+import { HTTPException } from "hono/http-exception";
+import slugify from "slugify";
+
+import { zValidator } from "#/middleware/validation";
+import {
+  createNewBook,
+  deleteBook,
+  getAllBooks,
+  getBookBySlug,
+  getDetailBook,
+  updateBook,
+} from "#/repository/book-repository";
+import {
+  bookInsertSchema,
+  bookQuerySchema,
+  bookSlugSchema,
+  bookUpdateSchema,
+} from "../types/book";
 
 const books = new Hono().basePath("/books");
 
-books
-  .get("/", async (c) => {
-    try {
-      const booksList = await db.query.bookTable.findMany({
-        orderBy: (book) => [book.id],
-      });
+const createSlug = (title: string, isbn: string) => {
+  return (
+    slugify(title, {
+      lower: true,
+      strict: true,
+    }) + `-${isbn}`
+  );
+};
 
-      if (!booksList) {
-        return c.json({ success: false, messages: "No books found" }, 404);
-      }
+books
+  .get("/", zValidator("query", bookQuerySchema), async (c) => {
+    try {
+      const { limit, offset, title } = c.req.valid("query");
+
+      const booksList = await getAllBooks(limit, offset - 1, title);
 
       return c.json({
         success: true,
@@ -31,25 +52,49 @@ books
       );
     }
   })
-  .get("/:id", async (c: Context) => {
-    try {
-      const bookId = c.req.param("id");
-      // Using more consistent query API
-      const getBook = await db.query.bookTable.findFirst({
-        where: (book) => eq(book.displayId, bookId),
-      });
+  .post("/", zValidator("json", bookInsertSchema), async (c) => {
+    const data = c.req.valid("json");
 
-      if (!getBook) {
-        return c.json({
-          success: false,
-          messages: "No book found with the given ID",
-        });
+    const bookSlug = createSlug(data.title, data.isbn);
+
+    const newBook = await createNewBook(bookSlug, data);
+
+    if (!newBook) {
+      throw new HTTPException(500, {
+        message: "Insert operations for books failed",
+      });
+    }
+
+    return c.json(
+      {
+        success: true,
+        messages: "Successfully create the new book",
+        data: [newBook],
+      },
+      201,
+    );
+  })
+  .get("/:slug", zValidator("param", bookSlugSchema), async (c: Context) => {
+    try {
+      const { slug: bookSlug } = c.req.valid("param");
+
+      const book = await getDetailBook(bookSlug);
+
+      if (!book) {
+        return c.json(
+          {
+            success: false,
+            messages: "No book found with the given slug",
+            data: [],
+          },
+          404,
+        );
       }
 
       return c.json({
         success: true,
         messages: "Book found from the database",
-        data: getBook,
+        data: [book],
       });
     } catch (e: unknown) {
       return c.json(
@@ -61,6 +106,49 @@ books
         500,
       );
     }
+  })
+  .put(
+    "/:slug",
+    zValidator("param", bookSlugSchema),
+    zValidator("json", bookUpdateSchema),
+    async (c) => {
+      const { slug: bookSlug } = c.req.valid("param");
+      const data = c.req.valid("json");
+
+      const book = await getBookBySlug(bookSlug);
+      if (!book) {
+        throw new HTTPException(404, {
+          message: "Not found any books with the slug",
+        });
+      }
+
+      const updatedBook = await updateBook(bookSlug, data);
+
+      return c.json(
+        {
+          success: true,
+          messages: "Successfully updated book data",
+          data: [updatedBook],
+        },
+        200,
+      );
+    },
+  )
+  .delete("/:slug", zValidator("param", bookSlugSchema), async (c) => {
+    const { slug: bookSlug } = c.req.valid("param");
+
+    const book = await getBookBySlug(bookSlug);
+    if (!book) {
+      throw new HTTPException(404, {
+        message: "Not found any books with the slug",
+      });
+    }
+
+    const _deletedBook = await deleteBook(bookSlug);
+    return c.json(
+      { success: true, messages: "Successfully deleted book", data: [] },
+      200,
+    );
   });
 
 export default books;
