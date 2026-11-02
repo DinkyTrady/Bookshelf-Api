@@ -1,9 +1,0 @@
-{
-  "$schema": "https://www.schemastore.org/package.json",
-  "name": "@bookshelf/shared",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  }
-}

@@ -1,37 +1,56 @@
 {
-  "$schema": "https://www.schemastore.org/package.json",
-  "name": "Bookshelf Apps",
-  "version": "1.0",
+  "$schema": "https://schemastore.org/package.json",
+  "name": "bookshelf-api",
+  "version": "0.1.0",
+  "license": "MIT",
   "author": {
     "name": "DinkyTrady"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "type": "module",
+  "main": "./src/app.ts",
+  "imports": {
+    "#types/": "./src/types/",
+    "#db/": "./src/db/",
+    "#repository/": "./src/repository/",
+    "#routes/": "./src/routes/",
+    "#middleware/": "./src/middleware/",
+    "#config/": "./src/config/",
+    "#lib/": "./src/lib/",
+    "#/": "./src/"
+  },
   "scripts": {
+    "dev": "bun run --smol --hot src/index.ts",
+    "build": "bun build --target bun src/index.ts --outdir dist --minify",
+    "start": "bun dist/index.js",
+    "migrate": "bunx drizzle-kit generate && bunx drizzle-kit migrate",
+    "docker:up": "docker compose up",
+    "docker:down": "docker compose down",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "fmt": "oxfmt",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
-    "@bookshelf/shared": "workspace:*"
+    "@hono/zod-validator": "^0.9.1",
+    "@libsql/client": "^0.18.0",
+    "dotenv": "^18.0.9",
+    "drizzle-orm": "^1.0.0-rc.5-ab785fc",
+    "hono": "^4.13.14",
+    "slugify": "^1.6.9",
+    "uuidv7": "^1.2.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.2",
-    "@types/node": "^26.6.4",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.2",
-    "oxfmt": "^0.72.0",
-    "oxlint": "^1.87.0",
-    "oxlint-tsgolint": "^7.0.2003",
+    "@types/bun": "^1.4.4",
+    "drizzle-kit": "^1.0.0-rc.5-ab785fc",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.3"
+    "vitest": "^5.0.5"
   }
 }

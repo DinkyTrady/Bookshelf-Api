@@ -1,6 +1,15 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
+  "$schema": "https://schemastore.org/tsconfig.json",
   "compilerOptions": {
+    "strict": true,
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "types": ["bun"],
+    "paths": {
+      "#/*": ["./src/*"],
+      "./*": ["./*"]
+    },
     "noUncheckedIndexedAccess": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
@@ -10,4 +19,5 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true
   },
+  "exclude": ["node_modules"]
 }
