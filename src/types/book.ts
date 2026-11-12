@@ -24,6 +24,15 @@ export const bookInsertSchema = createInsertSchema(books)
       .refine((items) => new Set(items).size === items.length, {
         message: "Items must be unique",
       }),
+  })
+  .superRefine((val, ctx) => {
+    if (val.readedPage > val.pageCount) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["readedPage"],
+        message: "readedPage can't be more than pageCount",
+      });
+    }
   });
 
 export const bookUpdateSchema = createUpdateSchema(books)
@@ -35,6 +44,17 @@ export const bookUpdateSchema = createUpdateSchema(books)
   .extend({
     authorIds: z.array(z.int().positive()).optional(),
     readedPage: z.int().nonnegative().optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.readedPage === undefined || val.pageCount === undefined) return;
+
+    if (val.readedPage > val.pageCount) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["readedPage"],
+        message: "readedPage can't be more than pageCount",
+      });
+    }
   });
 
 export const bookQuerySchema = z.object({
