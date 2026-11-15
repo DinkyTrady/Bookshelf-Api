@@ -16,7 +16,7 @@ import {
   bookQuerySchema,
   bookSlugSchema,
   bookUpdateSchema,
-} from "../types/book";
+} from "#/types/book";
 
 const books = new Hono().basePath("/books");
 
@@ -54,6 +54,10 @@ books
   })
   .post("/", zValidator("json", bookInsertSchema), async (c) => {
     const data = c.req.valid("json");
+
+    if (data.readedPage === data.pageCount && data.finished !== false) {
+      data.finished = true;
+    }
 
     const bookSlug = createSlug(data.title, data.isbn);
 
@@ -144,7 +148,7 @@ books
       });
     }
 
-    const _deletedBook = await deleteBook(bookSlug);
+    await deleteBook(bookSlug);
     return c.json(
       { success: true, messages: "Successfully deleted book", data: [] },
       200,

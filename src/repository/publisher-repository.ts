@@ -2,11 +2,11 @@ import { eq } from "drizzle-orm";
 
 import { createDatabase } from "#/db/client";
 import { publisher } from "#/db/schema";
-import {
+import type {
   Publisher,
   PublisherInsert,
   PublisherUpdate,
-} from "../types/publisher";
+} from "#/types/publisher";
 
 const { db } = createDatabase();
 export async function getAllPublisher(): Promise<Publisher[]> {
